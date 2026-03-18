@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Table Assignment</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h2>Dynamic Table Generator</h2>
+
+<input type="text" id="input1" placeholder="Enter like 3#3#3">
+<input type="text" id="input2" placeholder="Enter like 3#3#2">
+<br>
+<button onclick="generateTables()">Generate Tables</button>
+
+<div id="output"></div>
+
+<script>
+function createTable(rows, cols, start) {
+    let table = [];
+    let num = start;
+
+    for (let i = 0; i < rows; i++) {
+        table[i] = [];
+    }
+
+    
+    for (let j = 0; j < cols; j++) {
+        for (let i = 0; i < rows; i++) {
+            table[i][j] = num;
+            num += start;
+        }
+    }
+
+    return table;
+}
+
+function displayTable(data) {
+    let html = "<table>";
+    for (let i = 0; i < data.length; i++) {
+        html += "<tr>";
+        for (let j = 0; j < data[i].length; j++) {
+            html += "<td>" + data[i][j] + "</td>";
+        }
+        html += "</tr>";
+    }
+    html += "</table>";
+    return html;
+}
+
+function generateTables() {
+    let val1 = document.getElementById("input1").value.split("#");
+    let val2 = document.getElementById("input2").value.split("#");
+
+    let r1 = parseInt(val1[0]);
+    let c1 = parseInt(val1[1]);
+    let s1 = parseInt(val1[2]);
+
+    let r2 = parseInt(val2[0]);
+    let c2 = parseInt(val2[1]);
+    let s2 = parseInt(val2[2]);
+
+    let table1 = createTable(r1, c1, s1);
+    let table2 = createTable(r2, c2, s2);
+
+    let result = [];
+
+    for (let i = 0; i < r1; i++) {
+        result[i] = [];
+        for (let j = 0; j < c1; j++) {
+            if (table1[0][0] === table2[0][0]) {
+                result[i][j] = table1[i][j];
+            } else {
+                result[i][j] = table1[i][j] * table2[i][j];
+            }
+        }
+    }
+
+    // Detect duplicates
+    let flat = result.flat();
+    let duplicates = flat.filter((item, index) => flat.indexOf(item) !== index);
+
+    let html = "<h3>Table 1</h3>" + displayTable(table1);
+    html += "<h3>Table 2</h3>" + displayTable(table2);
+
+    // Table 3 with highlight
+    html += "<h3>Table 3</h3><table>";
+
+    for (let i = 0; i < result.length; i++) {
+        html += "<tr>";
+        for (let j = 0; j < result[i].length; j++) {
+            let val = result[i][j];
+            let cls = duplicates.includes(val) ? "highlight" : "";
+            html += `<td class="${cls}">${val}</td>`;
+        }
+        html += "</tr>";
+    }
+
+    html += "</table>";
+
+    document.getElementById("output").innerHTML = html;
+}
+</script>
+
+</body>
+</html>
